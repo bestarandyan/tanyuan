@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--base color-->
+    <color name="white">#ffffff</color>
+
+    <!--special color-->
+    <color name="black_a10">#1a000000</color>
+
+    <!--normal color-->
+    <color name="color_d0d0d0">#d0d0d0</color>
+    <color name="wheel_timebtn_nor">#54a3fa</color>
+    <color name="wheel_timebtn_pre">#CCCCCC</color>
+    <color name="shadow_start">#80000000</color>
+    <color name="shadow_end">#00000000</color>
+</resources>

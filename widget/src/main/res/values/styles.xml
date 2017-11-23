@@ -1,0 +1,20 @@
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <style name="BottomRefreshListView">
+        <item name="show_bottom_line">false</item>
+    </style>
+
+
+    <style name="InfoBarView">
+        <item name="infobar_title_text_appearance">@style/text_16_515c68</item>
+        <item name="infobar_value_text_appearance">@style/text_14_333333</item>
+        <item name="infobar_drawable_padding">8dip</item>
+        <item name="android:paddingLeft">10dip</item>
+        <item name="android:paddingRight">10dip</item>
+    </style>
+    <style name="timepopwindow_anim_style">
+        <item name="android:windowEnterAnimation">@anim/timepicker_anim_enter_bottom</item> <!-- 指定显示的动画xml -->
+        <item name="android:windowExitAnimation">@anim/timepicker_anim_exit_bottom</item> <!-- 指定消失的动画xml -->
+    </style>
+
+</resources>

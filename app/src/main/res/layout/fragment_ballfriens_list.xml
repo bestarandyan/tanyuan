@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/ballfriendListLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/comm_background"
+    android:clickable="true"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_margin="8dp"
+       >
+
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/ball_list_refresh"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="invisible">
+
+            <com.view.scalpel.widget.listview.BottomRefreshListView
+                android:id="@+id/ballListView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:divider="@color/transparent"
+                android:dividerHeight="8dp"
+                android:focusable="true"
+                android:listSelector="#00000000"
+                android:cacheColorHint="@null"
+                android:scrollbars="none"
+                app:show_bottom_line="false">
+
+            </com.view.scalpel.widget.listview.BottomRefreshListView>
+
+        </android.support.v4.widget.SwipeRefreshLayout>
+
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/noDataView"
+        android:layout_below="@id/topLayout"
+        android:gravity="center"
+        android:visibility="visible"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:src="@drawable/ease_default_image"></ImageView>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#999999"
+            android:text="附近暂无球友"
+            android:layout_marginTop="10dp"
+            />
+    </LinearLayout>
+</RelativeLayout>

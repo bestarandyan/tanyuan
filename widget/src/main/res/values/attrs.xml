@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="BottomRefreshListView">
+
+        <!-- Show split line at bottom of the listview. -->
+        <attr name="show_bottom_line" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="EditTextWithDeleteButton">
+        <attr name="hintText" format="string" />
+        <attr name="rightLabel" format="string" />
+        <attr name="deleteButtonRes" format="reference" />
+        <attr name="rightLabelStyle" format="reference" />
+        <attr name="show_delete_btn" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="InfoBarView">
+
+        <!-- Text to display for title. -->
+        <attr name="infobar_title_text" format="string" localization="suggested" />
+        <!-- Text appearance to display for title. -->
+        <attr name="infobar_title_text_appearance" format="integer" />
+        <!-- Text to display for value. -->
+        <attr name="infobar_value_text" format="string" localization="suggested" />
+        <!-- Text appearance to display for value. -->
+        <attr name="infobar_value_text_appearance" format="integer" />
+        <!-- Hint text to display for value. -->
+        <attr name="infobar_value_hint" format="string" localization="suggested" />
+        <!-- Text color to display for value hint. -->
+        <attr name="infobar_value_hint_color" format="integer" />
+        <!-- Drawable to be drawn to the left of title. -->
+        <attr name="infobar_drawable" format="reference" />
+        <!-- The padding between the drawables and the title text. -->
+        <attr name="infobar_drawable_padding" format="dimension" />
+        <!-- Drawable to be drawn as arrow to the right of value. -->
+        <attr name="infobar_arrow" format="reference" />
+        <attr name="infobar_focusable" format="boolean" />
+        <attr name="infobar_clickable" format="boolean" />
+        <!-- The direction to be drawn for the arrow drawable. -->
+        <attr name="arrow_direction">
+
+            <!-- Drawable to be drawn to right direction. -->
+            <enum name="right" value="0" />
+            <!-- Drawable to be drawn to bottom direction. -->
+            <enum name="bottom" value="1" />
+        </attr>
+        <!-- When true, show mandatory flag("*") with title text. -->
+        <attr name="isMandatory" format="boolean" />
+        <!-- When true, show arrow drawable. -->
+        <attr name="hasArrow" format="boolean" />
+        <!-- When true, show logo drawable. -->
+        <attr name="hasDrawable" format="boolean" />
+        <!-- The width of the drawable to be drawn. -->
+        <attr name="infobar_icon_width" format="dimension" />
+        <!-- The height of the drawable to be drawn. -->
+        <attr name="infobar_icon_height" format="dimension" />
+        <attr name="infobar_date_common_appearance" format="integer" />
+        <attr name="infobar_date_highlight_appearance" format="integer" />
+    </declare-styleable>
+
+    <declare-styleable name="WaterDropView">
+        <attr name="max_circle_radius" format="dimension"/>
+        <attr name="min_circle_radius" format="dimension"/>
+        <attr name="waterdrop_color" format="color"/>
+        <attr name="topcircle_x" format="dimension"/>
+        <attr name="topcircle_y" format="dimension"/>
+        <attr name="bottomcircle_x" format="dimension"/>
+        <attr name="bottomcircle_y" format="dimension"/>
+    </declare-styleable>
+
+    <declare-styleable name="QiuTextView">
+
+        <!-- The drawable to be drawn. -->
+        <attr name="text_drawable_src" format="reference" />
+        <!-- The direction of the drawable to be drawn. -->
+        <attr name="text_drawable_direction">
+
+            <!-- The drawable to be drawn to the left of the text. -->
+            <enum name="left" value="0" />
+            <!-- The drawable to be drawn above the text. -->
+            <enum name="top" value="1" />
+            <!-- The drawable to be drawn to the right of the text. -->
+            <enum name="right" value="2" />
+            <!-- The drawable to be drawn below the text. -->
+            <enum name="bottom" value="3" />
+        </attr>
+        <!-- The width of the drawable to be drawn. -->
+        <attr name="text_drawable_width" format="dimension" />
+        <!-- The height of the drawable to be drawn. -->
+        <attr name="text_drawable_height" format="dimension" />
+    </declare-styleable>
+
+
+    <declare-styleable name="myRatingBar">
+        <attr name="star" format="string"></attr>
+        <attr name="all_select_star" format="integer"></attr>
+        <attr name="half_select_star" format="integer"></attr>
+        <attr name="not_select_star" format="integer"></attr>
+        <attr name="orientation" format="integer"></attr>
+
+    </declare-styleable>
+
+
+    <declare-styleable name="FancyCoverFlow">
+        <attr name="unselectedAlpha" format="float"/>
+        <attr name="unselectedSaturation" format="float"/>
+        <attr name="unselectedScale" format="float"/>
+        <attr name="maxRotation" format="integer"/>
+        <attr name="scaleDownGravity" format="float"/>
+        <attr name="actionDistance" format="integer">
+            <enum name="auto" value="2147483647" />
+        </attr>
+    </declare-styleable>
+
+
+    <declare-styleable name="RoundedImageView">
+        <attr name="riv_corner_radius" format="dimension" />
+        <attr name="riv_corner_radius_top_left" format="dimension" />
+        <attr name="riv_corner_radius_top_right" format="dimension" />
+        <attr name="riv_corner_radius_bottom_left" format="dimension" />
+        <attr name="riv_corner_radius_bottom_right" format="dimension" />
+        <attr name="riv_border_width" format="dimension" />
+        <attr name="riv_border_color" format="color" />
+        <attr name="riv_mutate_background" format="boolean" />
+        <attr name="riv_oval" format="boolean" />
+        <attr name="android:scaleType" />
+        <attr name="riv_tile_mode">
+            <enum name="clamp" value="0" />
+            <enum name="repeat" value="1" />
+            <enum name="mirror" value="2" />
+        </attr>
+        <attr name="riv_tile_mode_x">
+            <enum name="clamp" value="0" />
+            <enum name="repeat" value="1" />
+            <enum name="mirror" value="2" />
+        </attr>
+        <attr name="riv_tile_mode_y">
+            <enum name="clamp" value="0" />
+            <enum name="repeat" value="1" />
+            <enum name="mirror" value="2" />
+        </attr>
+    </declare-styleable>
+    <declare-styleable name="CirCleRefreshLayout">
+        <attr name="AniBackColor" format="color" />
+        <attr name="AniForeColor" format="color" />
+        <attr name="CircleSmaller" format="integer"/>
+    </declare-styleable>
+</resources>
