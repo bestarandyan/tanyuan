@@ -71,7 +71,7 @@ public class RequestManager {
         String url = "http://api.qiuapp.cn/app/shop/detail?lon=121.92647560635912&lat=30.899331219193396&shopId=57&token=dd68306e7dab489b81860f26377a1225";
         OkHttpClient okHttpClient = new OkHttpClient();
         Request request = new Request.Builder()
-                .url(url)
+                .url(r.getPath())
 //                .addHeader("Accept","*/*")
 //                .addHeader("Content-Type","application/x-www-form-urlencoded")
 //                .addHeader("token","5773b595d47642979e6398e46fa05523")

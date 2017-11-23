@@ -1,0 +1,18 @@
+# Created by .ignore support plugin (hsz.mobi)
+.gitignore
+.gradle/
+.idea/compiler.xml
+.idea/dictionaries/
+.idea/encodings.xml
+.idea/gradle.xml
+.idea/libraries/
+.idea/misc.xml
+.idea/modules.xml
+.idea/runConfigurations.xml
+app/build/
+app/src/main/java/com/tanyuan/app/okhttp/
+build/
+network/libs/
+network/src/main/java/com/tanyuan/network/response/
+network/src/main/res/drawable/
+redpacketlibrary/build/
