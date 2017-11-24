@@ -5,7 +5,9 @@ import android.util.Log;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tanyuan.network.BuildConfig;
 import com.tanyuan.network.interfaces.EndpointRequest;
+import com.tanyuan.network.interfaces.RequestConfig;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -67,16 +69,20 @@ public class RequestManager {
 
     }
 
-    public static void requestByGet(NetRequest r){
+    public static void requestByGet(NetRequest netRequest){
         String url = "http://api.qiuapp.cn/app/shop/detail?lon=121.92647560635912&lat=30.899331219193396&shopId=57&token=dd68306e7dab489b81860f26377a1225";
+        StringBuffer httpUrl = new StringBuffer();
+        String host = BuildConfig.API_HOST;
+        httpUrl.append(host);
+//        String path = netRequest.getPath();
+        RequestConfig config = netRequest.getClass().getAnnotation(RequestConfig.class);
+        String path = config.path();
+        httpUrl.append(path);
+
         OkHttpClient okHttpClient = new OkHttpClient();
         Request request = new Request.Builder()
-                .url(r.getPath())
-//                .addHeader("Accept","*/*")
-//                .addHeader("Content-Type","application/x-www-form-urlencoded")
-//                .addHeader("token","5773b595d47642979e6398e46fa05523")
-//                .addHeader("userId","25876475")
-                .headers(r.getHeaders())
+                .url(netRequest.getPath())
+                .headers(netRequest.getHeaders())
                 .build();
         Call call = okHttpClient.newCall(request);
         Callback callback = new Callback() {

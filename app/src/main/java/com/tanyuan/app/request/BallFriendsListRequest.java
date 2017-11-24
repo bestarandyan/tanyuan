@@ -2,7 +2,6 @@ package com.tanyuan.app.request;
 
 import android.content.Context;
 
-import com.tanyuan.app.R;
 import com.tanyuan.network.interfaces.RequestConfig;
 
 import java.math.BigDecimal;
@@ -15,6 +14,12 @@ public class BallFriendsListRequest extends BaseRequest{
 
     public BallFriendsListRequest(Context context) {
     }
+
+    @Override
+    public String getPath() {
+        return "app/user/list/nearby";
+    }
+
     /**
      * 用户id
      */
