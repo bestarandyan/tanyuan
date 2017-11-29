@@ -92,7 +92,8 @@ public class UserListFragment extends FiltrageBaseFragment implements AdapterVie
         request = new BallFriendsListRequest(getActivity());
         request.setGender(1);
 //        RequestManager.loadData("https://www.baidu.com/",request);
-        RequestManager.requestByGet(request);
+        RequestManager manager = new RequestManager();
+        manager.requestByGet(request);
     }
 
 
