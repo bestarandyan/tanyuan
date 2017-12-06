@@ -14,12 +14,6 @@ public class BallFriendsListRequest extends BaseRequest{
 
     public BallFriendsListRequest(Context context) {
     }
-
-    @Override
-    public String getPath() {
-        return "app/user/list/nearby";
-    }
-
     /**
      * 用户id
      */

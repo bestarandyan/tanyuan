@@ -7,10 +7,11 @@ import android.widget.AdapterView;
 import android.widget.LinearLayout;
 
 import com.tanyuan.app.R;
-import com.tanyuan.app.base.FiltrageBaseFragment;
+import com.tanyuan.app.base.BaseFragment;
 import com.tanyuan.app.request.BallFriendsListRequest;
 import com.tanyuan.app.response.BallFriendsListResponse;
 import com.tanyuan.app.response.BallFriendsModel;
+import com.tanyuan.network.interfaces.RequestInterface;
 import com.tanyuan.network.request.RequestManager;
 import com.view.scalpel.widget.listview.BottomRefreshListView;
 
@@ -19,13 +20,14 @@ import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ViewById;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
  * Created by liuxingxing on 15/9/5.
  */
 @EFragment(R.layout.fragment_ballfriens_list)
-public class UserListFragment extends FiltrageBaseFragment implements AdapterView.OnItemClickListener{
+public class UserListFragment extends BaseFragment implements AdapterView.OnItemClickListener{
     @ViewById(R.id.ballListView)
     BottomRefreshListView mListView;
 
@@ -89,11 +91,23 @@ public class UserListFragment extends FiltrageBaseFragment implements AdapterVie
         }
     };
     private void getBallfriends(final int start,int size,boolean isShowLoading) {
+        String str = "lon=121.926654&lastOnLineTime=0&userId=25876475&pageSize=30&pageIndex=0&gender=0&type=0&lat=30.899225";
         request = new BallFriendsListRequest(getActivity());
+        request.setLastOnLineTime(0);
+        request.setLat(new BigDecimal("30.899225"));
+        request.setLon(new BigDecimal("121.926654"));
+        request.setType(0);
+        request.setUserId(25876475);
+        request.setPageIndex(0);
+        request.setPageSize(30);
         request.setGender(1);
 //        RequestManager.loadData("https://www.baidu.com/",request);
-        RequestManager manager = new RequestManager();
-        manager.requestByGet(request);
+        sendRequest(request, BallFriendsListResponse.class, new RequestInterface<BallFriendsListResponse>() {
+            @Override
+            public void onReceivedData(BallFriendsListResponse response) {
+                BallFriendsListResponse response1 = response;
+            }
+        });
     }
 
 

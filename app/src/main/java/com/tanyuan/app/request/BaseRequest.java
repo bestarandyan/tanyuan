@@ -40,7 +40,7 @@ public class BaseRequest extends NetRequest {
             builder.add(key,superHeaders.get(key));
         }
         builder.add("Content-Type","application/x-www-form-urlencoded");
-        builder.add("token","5773b595d47642979e6398e46fa05523");
+        builder.add("token","f5125e9d1c6542ef86ad51137c641921");
         builder.add("userId","25876475");
         return builder.build();
     }
