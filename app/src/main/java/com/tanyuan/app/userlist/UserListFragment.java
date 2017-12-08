@@ -11,6 +11,7 @@ import com.tanyuan.app.base.BaseFragment;
 import com.tanyuan.app.request.BallFriendsListRequest;
 import com.tanyuan.app.response.BallFriendsListResponse;
 import com.tanyuan.app.response.BallFriendsModel;
+import com.tanyuan.app.response.EndpointResponse;
 import com.tanyuan.network.interfaces.RequestInterface;
 import com.tanyuan.network.request.RequestManager;
 import com.view.scalpel.widget.listview.BottomRefreshListView;
@@ -102,12 +103,21 @@ public class UserListFragment extends BaseFragment implements AdapterView.OnItem
         request.setPageSize(30);
         request.setGender(1);
 //        RequestManager.loadData("https://www.baidu.com/",request);
-        sendRequest(request, BallFriendsListResponse.class, new RequestInterface<BallFriendsListResponse>() {
-            @Override
-            public void onReceivedData(BallFriendsListResponse response) {
-                BallFriendsListResponse response1 = response;
-            }
-        });
+
+        RequestManager.builder()
+                .requestByGet(request)
+                .setResponse(BallFriendsListResponse.class)
+                .setRequestListener(new RequestInterface<BallFriendsListResponse>() {
+                    @Override
+                    public void onReceivedData(BallFriendsListResponse response) {
+                        BallFriendsListResponse response1 = response;
+                    }
+
+                    @Override
+                    public void onErrorData(BallFriendsListResponse response) {
+
+                    }
+                });
     }
 
 

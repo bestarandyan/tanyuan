@@ -7,5 +7,6 @@ import okhttp3.Response;
  */
 
 public interface RequestInterface<T> {
-    public void onReceivedData(T response);
+    void onReceivedData(T response);
+    void onErrorData(T response);
 }

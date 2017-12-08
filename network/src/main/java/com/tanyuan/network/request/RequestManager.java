@@ -44,7 +44,7 @@ public class RequestManager<T> {
     }
 
     public RequestManager requestByGet(EndpointRequest netRequest) {
-        String url = " http://api.qiuapp.cn/app/shop/detail?lon=121.92654942270235&lat=30.899247058039965&shopId=57";
+//        String url = " http://api.qiuapp.cn/app/shop/detail?lon=121.92654942270235&lat=30.899247058039965&shopId=57";
         StringBuffer httpUrl = new StringBuffer();
         String host = BuildConfig.API_HOST;
         httpUrl.append(host);
@@ -65,7 +65,7 @@ public class RequestManager<T> {
         }
 
         OkHttpClient okHttpClient = new OkHttpClient();
-        Request request = new Request.Builder()
+        final Request request = new Request.Builder()
                 .url(httpUrl.toString())
                 .headers(netRequest.getHeaders())
                 .build();
@@ -91,6 +91,8 @@ public class RequestManager<T> {
                         e.printStackTrace();
                     }
 
+                }else{
+                    requestInterface.onErrorData(response);
                 }
 
             }
@@ -99,9 +101,13 @@ public class RequestManager<T> {
         return this;
     }
 
-    public RequestManager setResponseInterface(Class<T> clazz,RequestInterface<T> responseInterface){
-        this.clazz = clazz;
+    public RequestManager setRequestListener(RequestInterface<T> responseInterface){
         this.requestInterface = responseInterface;
+        return this;
+    }
+
+    public RequestManager setResponse(Class<T> clazz){
+        this.clazz = clazz;
         return this;
     }
 

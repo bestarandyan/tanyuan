@@ -18,19 +18,4 @@ import com.tanyuan.network.request.RequestManager;
  */
 public class BaseFragment<T> extends Fragment {
 
-
-
-    public void sendRequest(EndpointRequest request, Class response, final RequestInterface listener){
-        RequestManager.builder()
-                .requestByGet(request)
-                .setResponseInterface(response,new RequestInterface<EndpointResponse>() {
-                    @Override
-                    public void onReceivedData(EndpointResponse response) {
-                        listener.onReceivedData(response);
-                    }
-                });
-    }
-
-
-
 }

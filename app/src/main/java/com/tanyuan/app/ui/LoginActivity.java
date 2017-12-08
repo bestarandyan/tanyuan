@@ -36,20 +36,35 @@ import com.tanyuan.app.DemoHelper;
 import com.tanyuan.app.R;
 import com.tanyuan.app.db.DemoDBManager;
 import com.hyphenate.easeui.utils.EaseCommonUtils;
+import com.tanyuan.app.request.LoginRequest;
+import com.tanyuan.app.response.BallFriendsListResponse;
+import com.tanyuan.app.response.LoginResponse;
+import com.tanyuan.app.utils.CommonUtils;
+import com.tanyuan.network.interfaces.RequestInterface;
+import com.tanyuan.network.request.RequestManager;
+
+import org.androidannotations.annotations.AfterTextChange;
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.EditorAction;
+import org.androidannotations.annotations.TextChange;
+import org.androidannotations.annotations.ViewById;
 
 /**
  * Login screen
  * 
  */
+@EActivity(R.layout.em_activity_login)
 public class LoginActivity extends BaseActivity {
 	private static final String TAG = "LoginActivity";
 	public static final int REQUEST_CODE_SETNICK = 1;
+	@ViewById(R.id.username)
 	private EditText usernameEditText;
+	@ViewById(R.id.password)
 	private EditText passwordEditText;
 
 	private boolean progressShow;
 	private boolean autoLogin = false;
-
+	private LoginRequest request;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -61,44 +76,24 @@ public class LoginActivity extends BaseActivity {
 
 			return;
 		}
-		setContentView(R.layout.em_activity_login);
-
-		usernameEditText = (EditText) findViewById(R.id.username);
-		passwordEditText = (EditText) findViewById(R.id.password);
-
-		// if user changed, clear the password
-		usernameEditText.addTextChangedListener(new TextWatcher() {
-			@Override
-			public void onTextChanged(CharSequence s, int start, int before, int count) {
-				passwordEditText.setText(null);
-			}
-
-			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-			}
-
-			@Override
-			public void afterTextChanged(Editable s) {
-
-			}
-		});
-
-		passwordEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-			@Override
-			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-				if (actionId == EditorInfo.IME_ACTION_DONE || ((event.getKeyCode() == KeyEvent.KEYCODE_ENTER) && (event.getAction() == KeyEvent.ACTION_DOWN ))) {
-					login(null);
-					return true;
-				}
-				else{
-					return false;
-				}
-			}
-		});
-
 		if (DemoHelper.getInstance().getCurrentUsernName() != null) {
 			usernameEditText.setText(DemoHelper.getInstance().getCurrentUsernName());
+		}
+	}
+
+	@TextChange(R.id.username)
+	void onUserNameTextChange(){
+		passwordEditText.setText(null);
+	}
+
+	@EditorAction(R.id.password)
+	boolean onEditorAction(int actionId, KeyEvent event){
+		if (actionId == EditorInfo.IME_ACTION_DONE || ((event.getKeyCode() == KeyEvent.KEYCODE_ENTER) && (event.getAction() == KeyEvent.ACTION_DOWN ))) {
+			login(null);
+			return true;
+		}
+		else{
+			return false;
 		}
 	}
 
@@ -160,8 +155,7 @@ public class LoginActivity extends BaseActivity {
 			    EMClient.getInstance().chatManager().loadAllConversations();
 
 			    // update current user's display name for APNs
-				boolean updatenick = EMClient.getInstance().pushManager().updatePushNickname(
-						DemoApplication.currentUserNick.trim());
+				boolean updatenick = EMClient.getInstance().pushManager().updatePushNickname(DemoApplication.currentUserNick.trim());
 				if (!updatenick) {
 					Log.e("LoginActivity", "update current user nick fail");
 				}
@@ -201,7 +195,55 @@ public class LoginActivity extends BaseActivity {
 		});
 	}
 
-	
+
+
+
+	private void login() {
+		if (TextUtils.isEmpty(usernameEditText.getText().toString())) {
+			Toast.makeText(this, "用户名不能为空", Toast.LENGTH_SHORT).show();
+			return;
+		}
+		if (TextUtils.isEmpty(passwordEditText.getText().toString())) {
+			Toast.makeText(this, "密码不能为空", Toast.LENGTH_SHORT).show();
+			return;
+		}
+		request = new LoginRequest(this);
+		final String mobile = usernameEditText.getText().toString().trim();
+		request.phone = mobile;
+		final String password = passwordEditText.getText().toString().trim();
+		request.password = CommonUtils.getMD5(CommonUtils.getMD5(password) + "iqiuqiu");
+		request.type = "phone";
+		request.platform = "2";
+		RequestManager.builder()
+				.requestByGet(request)
+				.setResponse(LoginResponse.class)
+				.setRequestListener(new RequestInterface<BallFriendsListResponse>() {
+					@Override
+					public void onReceivedData(BallFriendsListResponse response) {
+						BallFriendsListResponse response1 = response;
+//						try {
+//							getPerf().commitString(R.string.user_id, response.data.user_id);
+//							getPerf().commitString(R.string.login_token, response.data.token);
+//							getPerf().commitString(R.string.user_mobile, mobile);
+//							getPerf().commitString(R.string.login_type, "phone");
+//							// password
+//							String passwordStr = AESUtil.encrypt(password, Constants.AES_KEY);
+//							getPerf().commitString(R.string.user_password, passwordStr);
+//							UserInfoUtil.saveUserId(getActivity(), response.data.user_id);
+//							loginSuccess();
+//						} catch (Exception e) {
+//							e.printStackTrace();
+//						}
+					}
+
+					@Override
+					public void onErrorData(BallFriendsListResponse response) {
+
+					}
+				});
+
+	}
+
 	/**
 	 * register
 	 * 

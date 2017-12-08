@@ -10,7 +10,7 @@ import java.math.BigDecimal;
  * Created by liuxingxing on 2/9/15.
  */
 @RequestConfig(path = "app/user/list/nearby")
-public class BallFriendsListRequest extends BaseRequest{
+public class BallFriendsListRequest extends BaseListRequest{
 
     public BallFriendsListRequest(Context context) {
     }
