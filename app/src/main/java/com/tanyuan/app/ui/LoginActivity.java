@@ -38,12 +38,17 @@ import com.tanyuan.app.db.DemoDBManager;
 import com.hyphenate.easeui.utils.EaseCommonUtils;
 import com.tanyuan.app.request.LoginRequest;
 import com.tanyuan.app.response.BallFriendsListResponse;
+import com.tanyuan.app.response.LoginEntity;
 import com.tanyuan.app.response.LoginResponse;
+import com.tanyuan.app.utils.AESUtil;
 import com.tanyuan.app.utils.CommonUtils;
+import com.tanyuan.app.utils.Constants;
+import com.tanyuan.app.utils.preference.UserPreferenceUtils;
 import com.tanyuan.network.interfaces.RequestInterface;
 import com.tanyuan.network.request.RequestManager;
 
 import org.androidannotations.annotations.AfterTextChange;
+import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.EditorAction;
 import org.androidannotations.annotations.TextChange;
@@ -53,22 +58,22 @@ import org.androidannotations.annotations.ViewById;
  * Login screen
  * 
  */
-@EActivity(R.layout.em_activity_login)
 public class LoginActivity extends BaseActivity {
 	private static final String TAG = "LoginActivity";
 	public static final int REQUEST_CODE_SETNICK = 1;
-	@ViewById(R.id.username)
-	private EditText usernameEditText;
-	@ViewById(R.id.password)
-	private EditText passwordEditText;
+	EditText usernameEditText;
+	EditText passwordEditText;
 
 	private boolean progressShow;
 	private boolean autoLogin = false;
 	private LoginRequest request;
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
 
+	@Override
+	protected void onCreate(Bundle arg0) {
+		super.onCreate(arg0);
+		setContentView(R.layout.em_activity_login);
+		usernameEditText = findViewById(R.id.username);
+		passwordEditText = findViewById(R.id.password);
 		// enter the main activity if already logged in
 		if (DemoHelper.getInstance().isLoggedIn()) {
 			autoLogin = true;
@@ -76,24 +81,38 @@ public class LoginActivity extends BaseActivity {
 
 			return;
 		}
+		usernameEditText.addTextChangedListener(new TextWatcher() {
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+				passwordEditText.setText(null);
+			}
+
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+			}
+
+			@Override
+			public void afterTextChanged(Editable s) {
+
+			}
+		});
+
+		passwordEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+			@Override
+			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+				if (actionId == EditorInfo.IME_ACTION_DONE || ((event.getKeyCode() == KeyEvent.KEYCODE_ENTER) && (event.getAction() == KeyEvent.ACTION_DOWN ))) {
+					login(null);
+					return true;
+				}
+				else{
+					return false;
+				}
+			}
+		});
+
 		if (DemoHelper.getInstance().getCurrentUsernName() != null) {
 			usernameEditText.setText(DemoHelper.getInstance().getCurrentUsernName());
-		}
-	}
-
-	@TextChange(R.id.username)
-	void onUserNameTextChange(){
-		passwordEditText.setText(null);
-	}
-
-	@EditorAction(R.id.password)
-	boolean onEditorAction(int actionId, KeyEvent event){
-		if (actionId == EditorInfo.IME_ACTION_DONE || ((event.getKeyCode() == KeyEvent.KEYCODE_ENTER) && (event.getAction() == KeyEvent.ACTION_DOWN ))) {
-			login(null);
-			return true;
-		}
-		else{
-			return false;
 		}
 	}
 
@@ -120,7 +139,23 @@ public class LoginActivity extends BaseActivity {
 		}
 
 		progressShow = true;
-		final ProgressDialog pd = new ProgressDialog(LoginActivity.this);
+		showDialog();
+		login();
+		// After logout，the DemoDB may still be accessed due to async callback, so the DemoDB will be re-opened again.
+		// close it before login to make sure DemoDB not overlap
+        DemoDBManager.getInstance().closeDB();
+
+        // reset current user name before login
+        DemoHelper.getInstance().setCurrentUserName(currentUsername);
+        
+		final long start = System.currentTimeMillis();
+		// call login method
+		Log.d(TAG, "EMClient.getInstance().login");
+
+	}
+	 ProgressDialog pd = null;
+	private void showDialog(){
+		pd = new ProgressDialog(LoginActivity.this);
 		pd.setCanceledOnTouchOutside(false);
 		pd.setOnCancelListener(new OnCancelListener() {
 
@@ -132,69 +167,15 @@ public class LoginActivity extends BaseActivity {
 		});
 		pd.setMessage(getString(R.string.Is_landing));
 		pd.show();
-
-		// After logout，the DemoDB may still be accessed due to async callback, so the DemoDB will be re-opened again.
-		// close it before login to make sure DemoDB not overlap
-        DemoDBManager.getInstance().closeDB();
-
-        // reset current user name before login
-        DemoHelper.getInstance().setCurrentUserName(currentUsername);
-        
-		final long start = System.currentTimeMillis();
-		// call login method
-		Log.d(TAG, "EMClient.getInstance().login");
-		EMClient.getInstance().login(currentUsername, currentPassword, new EMCallBack() {
-
-			@Override
-			public void onSuccess() {
-				Log.d(TAG, "login: onSuccess");
-
-
-				// ** manually load all local groups and conversation
-			    EMClient.getInstance().groupManager().loadAllGroups();
-			    EMClient.getInstance().chatManager().loadAllConversations();
-
-			    // update current user's display name for APNs
-				boolean updatenick = EMClient.getInstance().pushManager().updatePushNickname(DemoApplication.currentUserNick.trim());
-				if (!updatenick) {
-					Log.e("LoginActivity", "update current user nick fail");
-				}
-
-				if (!LoginActivity.this.isFinishing() && pd.isShowing()) {
-				    pd.dismiss();
-				}
-				// get user's info (this should be get from App's server or 3rd party service)
-				DemoHelper.getInstance().getUserProfileManager().asyncGetCurrentUserInfo();
-
-				Intent intent = new Intent(LoginActivity.this,
-						MainActivity.class);
-				startActivity(intent);
-
-				finish();
-			}
-
-			@Override
-			public void onProgress(int progress, String status) {
-				Log.d(TAG, "login: onProgress");
-			}
-
-			@Override
-			public void onError(final int code, final String message) {
-				Log.d(TAG, "login: onError: " + code);
-				if (!progressShow) {
-					return;
-				}
-				runOnUiThread(new Runnable() {
-					public void run() {
-						pd.dismiss();
-						Toast.makeText(getApplicationContext(), getString(R.string.Login_failed) + message,
-								Toast.LENGTH_SHORT).show();
-					}
-				});
-			}
-		});
 	}
 
+	private void dismissDialog(){
+		if (pd!=null) {
+			pd.dismiss();
+			pd.cancel();
+			pd = null;
+		}
+	}
 
 
 
@@ -214,34 +195,92 @@ public class LoginActivity extends BaseActivity {
 		request.password = CommonUtils.getMD5(CommonUtils.getMD5(password) + "iqiuqiu");
 		request.type = "phone";
 		request.platform = "2";
+		request.open_id = "";
 		RequestManager.builder()
-				.requestByGet(request)
 				.setResponse(LoginResponse.class)
-				.setRequestListener(new RequestInterface<BallFriendsListResponse>() {
+				.setRequestListener(new RequestInterface<LoginResponse>() {
 					@Override
-					public void onReceivedData(BallFriendsListResponse response) {
-						BallFriendsListResponse response1 = response;
-//						try {
-//							getPerf().commitString(R.string.user_id, response.data.user_id);
-//							getPerf().commitString(R.string.login_token, response.data.token);
-//							getPerf().commitString(R.string.user_mobile, mobile);
-//							getPerf().commitString(R.string.login_type, "phone");
-//							// password
-//							String passwordStr = AESUtil.encrypt(password, Constants.AES_KEY);
-//							getPerf().commitString(R.string.user_password, passwordStr);
-//							UserInfoUtil.saveUserId(getActivity(), response.data.user_id);
-//							loginSuccess();
-//						} catch (Exception e) {
-//							e.printStackTrace();
-//						}
+					public void onReceivedData(LoginResponse response) {
+						 Log.e("登录返回结果 =====" ,response.getMessage());
+						try {
+							LoginEntity entity = response.data;
+							loginIm(entity.user_id);
+							entity.userName = mobile;
+							// password
+							String passwordStr = AESUtil.encrypt(password, Constants.AES_KEY);//加密
+							entity.userPassword = passwordStr;
+							UserPreferenceUtils.commitUserData(LoginActivity.this,entity);
+							loginSuccess();
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
 					}
 
 					@Override
-					public void onErrorData(BallFriendsListResponse response) {
+					public void onErrorData(LoginResponse response) {
 
+					}
+				})
+				.requestPost(request);
+
+	}
+
+	private void loginIm(String userName){
+		String password = CommonUtils.getMD5(CommonUtils.getMD5(userName) + "qiuqiu");
+		if (userName == null || password == null){
+			return;
+		}
+		EMClient.getInstance().login(userName, password, new EMCallBack() {
+
+			@Override
+			public void onSuccess() {
+				Log.e(TAG, "loginIM: onSuccess");
+
+
+				// ** manually load all local groups and conversation
+				EMClient.getInstance().groupManager().loadAllGroups();
+				EMClient.getInstance().chatManager().loadAllConversations();
+
+				// update current user's display name for APNs
+				boolean updatenick = EMClient.getInstance().pushManager().updatePushNickname(DemoApplication.currentUserNick.trim());
+				if (!updatenick) {
+					Log.e("LoginActivity", "update current user nick fail");
+				}
+
+//				if (!LoginActivity.this.isFinishing() && pd.isShowing()) {
+//					pd.dismiss();
+//				}
+				// get user's info (this should be get from App's server or 3rd party service)
+				DemoHelper.getInstance().getUserProfileManager().asyncGetCurrentUserInfo();
+			}
+
+			@Override
+			public void onProgress(int progress, String status) {
+				Log.e(TAG, "login: onProgress");
+			}
+
+			@Override
+			public void onError(final int code, final String message) {
+				Log.e(TAG, "login: onError: " + code);
+				if (!progressShow) {
+					return;
+				}
+				runOnUiThread(new Runnable() {
+					public void run() {
+//						pd.dismiss();
+						Toast.makeText(getApplicationContext(), getString(R.string.Login_failed) + message,
+								Toast.LENGTH_SHORT).show();
 					}
 				});
+			}
+		});
+	}
 
+	private void loginSuccess(){
+		Intent intent = new Intent(LoginActivity.this,MainActivity.class);
+		startActivity(intent);
+		dismissDialog();
+		finish();
 	}
 
 	/**

@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 public class LoginRequest extends BaseRequest{
 
     public LoginRequest(Context context) {
+        super(context);
     }
     public String type;
     public String phone;

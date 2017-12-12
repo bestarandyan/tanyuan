@@ -8,4 +8,6 @@ import java.io.Serializable;
 public class LoginEntity implements Serializable{
     public String user_id;
     public String token;
+    public String userName;//非接口返回
+    public String userPassword;//非接口返回
 }

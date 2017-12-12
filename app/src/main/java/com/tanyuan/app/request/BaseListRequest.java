@@ -1,5 +1,7 @@
 package com.tanyuan.app.request;
 
+import android.content.Context;
+
 import com.tanyuan.network.request.NetRequest;
 
 import okhttp3.Headers;
@@ -9,6 +11,10 @@ import okhttp3.Headers;
  */
 
 public class BaseListRequest extends GetDataRequest {
+
+    BaseListRequest(Context context){
+        super(context);
+    }
 
     private Integer pageSize;
 

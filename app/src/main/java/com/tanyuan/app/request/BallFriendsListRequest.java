@@ -13,7 +13,9 @@ import java.math.BigDecimal;
 public class BallFriendsListRequest extends BaseListRequest{
 
     public BallFriendsListRequest(Context context) {
+        super(context);
     }
+
     /**
      * 用户id
      */

@@ -18,10 +18,15 @@ import com.hyphenate.chat.EMClient;
 import com.tanyuan.app.DemoHelper;
 import com.tanyuan.app.R;
 import com.hyphenate.exceptions.HyphenateException;
+import com.tanyuan.app.request.RegisterUserInfoRequest;
+import com.tanyuan.app.response.RegisterResponse;
+import com.tanyuan.network.interfaces.RequestInterface;
+import com.tanyuan.network.request.RequestManager;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -82,7 +87,7 @@ public class RegisterActivity extends BaseActivity {
 								// save current user
 								DemoHelper.getInstance().setCurrentUserName(username);
 								Toast.makeText(getApplicationContext(), getResources().getString(R.string.Registered_successfully), Toast.LENGTH_SHORT).show();
-								finish();
+								registerRequest();
 							}
 						});
 					} catch (final HyphenateException e) {
@@ -109,6 +114,48 @@ public class RegisterActivity extends BaseActivity {
 			}).start();
 
 		}
+	}
+
+	private void registerRequest(){
+		// &password=qqqqqq
+		// &lon=0
+		// &open_id=
+		// &small_avatar=http%3A%2F%2Fqiuqiu-photo.oss-cn-hangzhou.aliyuncs.com%2Fuser%2Fthumbnail%2Fe87f81dde76843c98c53dda5c0267f8d.jpg
+		// &nickname=bestar
+		// &avatar=http%3A%2F%2Fqiuqiu-photo.oss-cn-hangzhou.aliyuncs.com%2Fuser%2Foriginal%2Fc2648c8926ce482c82d975f50e4b4e05.jpg
+		// &phone=18068409470
+		// &invitation_code=
+		// &gender=1
+		// &birthday=1990-01-01
+		// &type=phone
+		// &lat=0
+		RegisterUserInfoRequest request =  new RegisterUserInfoRequest(getApplicationContext());
+		request.setAvatar("http://qiuqiu-photo.oss-cn-hangzhou.aliyuncs.com/user/thumbnail/e87f81dde76843c98c53dda5c0267f8d.jpg");
+		request.setSmall_avatar("http://qiuqiu-photo.oss-cn-hangzhou.aliyuncs.com/user/thumbnail/e87f81dde76843c98c53dda5c0267f8d.jpg");
+		request.setBirthday("1990-01-01");
+		request.setGender("1");
+		request.setNickname("bestar1");
+		request.setType("phone");
+		request.setInvitation_code("");
+		request.setPhone(userNameEditText.getText().toString());
+		request.setPassword(passwordEditText.getText().toString());
+		request.setOpen_id("");
+		request.setLat("0");
+		request.setLon("0");
+		RequestManager.builder()
+				.requestByGet(request)
+				.setResponse(RegisterResponse.class)
+				.setRequestListener(new RequestInterface<RegisterResponse>() {
+					@Override
+					public void onReceivedData(RegisterResponse response) {
+						Log.e("注册结果",response.getMessage() + response.getResultCode());
+					}
+
+					@Override
+					public void onErrorData(RegisterResponse response) {
+
+					}
+				});
 	}
 
 	public void back(View view) {

@@ -13,6 +13,7 @@ import com.tanyuan.network.interfaces.EndpointRequest;
 import com.tanyuan.network.interfaces.RequestConfig;
 import com.tanyuan.network.interfaces.RequestInterface;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -25,6 +26,7 @@ import java.util.concurrent.TimeUnit;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -43,8 +45,7 @@ public class RequestManager<T> {
         return new RequestManager();
     }
 
-    public RequestManager requestByGet(EndpointRequest netRequest) {
-//        String url = " http://api.qiuapp.cn/app/shop/detail?lon=121.92654942270235&lat=30.899247058039965&shopId=57";
+    private String getUrl(EndpointRequest netRequest){
         StringBuffer httpUrl = new StringBuffer();
         String host = BuildConfig.API_HOST;
         httpUrl.append(host);
@@ -57,13 +58,21 @@ public class RequestManager<T> {
             httpUrl.append(path);
         }
 
+        return httpUrl.toString();
+    }
+
+    public RequestManager requestByGet(EndpointRequest netRequest) {
+//        String url = " http://api.qiuapp.cn/app/shop/detail?lon=121.92654942270235&lat=30.899247058039965&shopId=57";
+        StringBuffer httpUrl = new StringBuffer();
+        httpUrl.append(getUrl(netRequest));
 
         String content = encodeParametersToString(getParams(netRequest));
         if (!TextUtils.isEmpty(content)) {
             httpUrl.append("?");
             httpUrl.append(content);
         }
-
+        Log.e("requestHeader=========", netRequest.getHeaders() + "请求头");
+        Log.e("requestURL=========", httpUrl.toString() + "请求链接");
         OkHttpClient okHttpClient = new OkHttpClient();
         final Request request = new Request.Builder()
                 .url(httpUrl.toString())
@@ -86,6 +95,8 @@ public class RequestManager<T> {
                         ObjectMapper objectMapper = new ObjectMapper();
                         T object = objectMapper.readValue(json,clazz);
 //                        JSONObject data = new JSONObject(json.trim());// 这种方式也可行
+//                         Log.e("dataMessage ====== ",data.get("message").toString());
+
                         requestInterface.onReceivedData(object);
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -111,7 +122,7 @@ public class RequestManager<T> {
         return this;
     }
 
-    public static void loadData(String url, EndpointRequest requestModel) {
+    public RequestManager requestPost(EndpointRequest netRequest) {
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .connectTimeout(30, TimeUnit.SECONDS)
                 .build();
@@ -119,13 +130,30 @@ public class RequestManager<T> {
         mMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         String bodyStr = null;
         try {
-            bodyStr = mMapper.writeValueAsString(requestModel);
+            bodyStr = mMapper.writer().withDefaultPrettyPrinter().writeValueAsString(netRequest);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
 //        RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"),bodyStr);
-        RequestBody body = new FormBody.Builder().build();
-        Request request = new Request.Builder().url(url).post(body).build();
+        FormBody.Builder builder = new FormBody.Builder();
+        try {
+            JSONObject data = new JSONObject(bodyStr.trim());// 这种方式也可行
+            for (int i=0;i<data.names().length();i++) {
+                builder.add(data.names().getString(i),data.getString(data.names().getString(i)));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        RequestBody body = builder.build();
+        Log.e("请求参数=========",bodyStr);
+        String url = getUrl(netRequest);
+        Log.e("请求链接=========", url.toString());
+        Log.e("请求头=========", netRequest.getHeaders().toString());
+        Request request = new Request.Builder()
+                .url(url)
+                .headers(netRequest.getHeaders())
+                .post(body)
+                .build();
         Call call = okHttpClient.newCall(request);
         Callback callback = new Callback() {
             @Override
@@ -136,7 +164,21 @@ public class RequestManager<T> {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 Boolean isSuccess = response.isSuccessful();
-                Log.d("requestTag", isSuccess + "请求结果");
+                if (isSuccess){
+                    String json = response.body().string();
+                    Log.e("requestTag", json + "请求结果");
+                    try {
+                        ObjectMapper objectMapper = new ObjectMapper();
+                        T object = objectMapper.readValue(json,clazz);
+//                        Log.e("dataMessage ====== ",data.get("message").toString());
+                        requestInterface.onReceivedData(object);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                }else{
+                    requestInterface.onErrorData(response);
+                }
             }
         };
         call.enqueue(callback);
@@ -147,7 +189,7 @@ public class RequestManager<T> {
 //        } catch (IOException e) {
 //            e.printStackTrace();
 //        }
-
+        return this;
     }
 
     /**
@@ -182,7 +224,7 @@ public class RequestManager<T> {
         StringBuilder encodedParams = new StringBuilder();
         try {
             for (Map.Entry<String, String> entry : params.entrySet()) {
-                encodedParams.append(URLEncoder.encode(entry.getKey(), paramsEncoding));
+                encodedParams.append(URLEncoder.encode(entry.getKey().toLowerCase(), paramsEncoding));
                 encodedParams.append('=');
                 encodedParams.append(URLEncoder.encode(entry.getValue(), paramsEncoding));
                 encodedParams.append('&');

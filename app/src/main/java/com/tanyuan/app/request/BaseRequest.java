@@ -1,5 +1,7 @@
 package com.tanyuan.app.request;
 
+import android.content.Context;
+
 import com.tanyuan.network.request.NetRequest;
 
 import java.util.Set;
@@ -12,6 +14,8 @@ import okhttp3.Headers;
  */
 
 public class BaseRequest extends GetDataRequest {
-
+    public BaseRequest(Context context){
+        super(context);
+    }
 
 }
