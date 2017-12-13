@@ -1,9 +1,8 @@
 package com.tanyuan.network.request;
-
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.TimeUtils;
 
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -12,25 +11,20 @@ import com.tanyuan.network.Utils.JsonUtils;
 import com.tanyuan.network.interfaces.EndpointRequest;
 import com.tanyuan.network.interfaces.RequestConfig;
 import com.tanyuan.network.interfaces.RequestInterface;
-
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.URLEncoder;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-
 import okhttp3.Call;
-import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
-import okhttp3.Response;
 
 /**
  * Created by liuxingxing on 2017/11/16.
@@ -41,155 +35,178 @@ public class RequestManager<T> {
     public RequestInterface requestInterface;
     public Class<T> clazz;
 
-    public static RequestManager builder(){
+    public static RequestManager builder() {
         return new RequestManager();
     }
 
-    private String getUrl(EndpointRequest netRequest){
+    /**
+     * 获取请求服务器请求地址
+     * @param netRequest
+     * @return
+     */
+    private String getUrl(EndpointRequest netRequest) {
         StringBuffer httpUrl = new StringBuffer();
         String host = BuildConfig.API_HOST;
         httpUrl.append(host);
-
-//        String path = netRequest.getPath();
         RequestConfig config = netRequest.getClass().getAnnotation(RequestConfig.class);
         String path = config.path();
         if (!TextUtils.isEmpty(path)) {
             httpUrl.append("/");
             httpUrl.append(path);
         }
-
+        Log.e("请求链接=========", httpUrl.toString());
         return httpUrl.toString();
     }
 
-    public RequestManager requestByGet(EndpointRequest netRequest) {
-//        String url = " http://api.qiuapp.cn/app/shop/detail?lon=121.92654942270235&lat=30.899247058039965&shopId=57";
+    /**
+     * 获取get请求的请求地址
+     * @param netRequest
+     * @return
+     */
+    private String getUrlForGetRequest(EndpointRequest netRequest){
         StringBuffer httpUrl = new StringBuffer();
         httpUrl.append(getUrl(netRequest));
-
         String content = encodeParametersToString(getParams(netRequest));
         if (!TextUtils.isEmpty(content)) {
             httpUrl.append("?");
             httpUrl.append(content);
         }
-        Log.e("requestHeader=========", netRequest.getHeaders() + "请求头");
-        Log.e("requestURL=========", httpUrl.toString() + "请求链接");
-        OkHttpClient okHttpClient = new OkHttpClient();
+        Log.e("get请求链接=========", httpUrl.toString());
+        return httpUrl.toString();
+    }
+
+    /**
+     * get请求
+     * @param netRequest
+     * @return
+     */
+    public RequestManager requestByGet(EndpointRequest netRequest) {
         final Request request = new Request.Builder()
-                .url(httpUrl.toString())
+                .url(getUrlForGetRequest(netRequest))
                 .headers(netRequest.getHeaders())
                 .build();
-        Call call = okHttpClient.newCall(request);
-        Callback callback = new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                Boolean isSuccess = response.isSuccessful();
-                if (isSuccess){
-                    String json = response.body().string();
-                    Log.e("requestTag", json + "请求结果");
-                    try {
-                        ObjectMapper objectMapper = new ObjectMapper();
-                        T object = objectMapper.readValue(json,clazz);
-//                        JSONObject data = new JSONObject(json.trim());// 这种方式也可行
-//                         Log.e("dataMessage ====== ",data.get("message").toString());
-
-                        requestInterface.onReceivedData(object);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-                }else{
-                    requestInterface.onErrorData(response);
-                }
-
-            }
-        };
-        call.enqueue(callback);
+        sendRequest(request);
         return this;
     }
 
-    public RequestManager setRequestListener(RequestInterface<T> responseInterface){
-        this.requestInterface = responseInterface;
-        return this;
-    }
-
-    public RequestManager setResponse(Class<T> clazz){
-        this.clazz = clazz;
-        return this;
-    }
-
-    public RequestManager requestPost(EndpointRequest netRequest) {
-        OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                .connectTimeout(30, TimeUnit.SECONDS)
-                .build();
-        ObjectMapper mMapper = new ObjectMapper();
-        mMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-        String bodyStr = null;
-        try {
-            bodyStr = mMapper.writer().withDefaultPrettyPrinter().writeValueAsString(netRequest);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-//        RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"),bodyStr);
-        FormBody.Builder builder = new FormBody.Builder();
-        try {
-            JSONObject data = new JSONObject(bodyStr.trim());// 这种方式也可行
-            for (int i=0;i<data.names().length();i++) {
-                builder.add(data.names().getString(i),data.getString(data.names().getString(i)));
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        RequestBody body = builder.build();
-        Log.e("请求参数=========",bodyStr);
+    /**
+     * post请求
+     * @param netRequest
+     * @return
+     */
+    public RequestManager requestByPost(EndpointRequest netRequest) {
+        RequestBody body = getRequestBody(netRequest);/*getBuilder(netRequest).build();*/
         String url = getUrl(netRequest);
-        Log.e("请求链接=========", url.toString());
         Log.e("请求头=========", netRequest.getHeaders().toString());
         Request request = new Request.Builder()
                 .url(url)
                 .headers(netRequest.getHeaders())
                 .post(body)
                 .build();
-        Call call = okHttpClient.newCall(request);
-        Callback callback = new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
+        sendRequest(request);
 
-            }
+        return this;
+    }
 
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                Boolean isSuccess = response.isSuccessful();
-                if (isSuccess){
-                    String json = response.body().string();
-                    Log.e("requestTag", json + "请求结果");
-                    try {
-                        ObjectMapper objectMapper = new ObjectMapper();
-                        T object = objectMapper.readValue(json,clazz);
-//                        Log.e("dataMessage ====== ",data.get("message").toString());
-                        requestInterface.onReceivedData(object);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+    /**
+     * 发送请求  并设置监听器
+     * @param request
+     */
+    private void sendRequest(Request request){
+        Call call = getClient().newCall(request);
+        call.enqueue(new RequestCallBack(requestInterface, clazz));
+    }
 
-                }else{
-                    requestInterface.onErrorData(response);
+    /**
+     *初始化OkHttpClient
+     * @return
+     */
+    private OkHttpClient getClient(){
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .connectTimeout(30, TimeUnit.SECONDS)
+                .writeTimeout(10, TimeUnit.SECONDS)
+                .readTimeout(30,TimeUnit.SECONDS)
+                .build();
+        return okHttpClient;
+    }
+
+
+    public RequestManager setRequestListener(RequestInterface<T> responseInterface) {
+        this.requestInterface = responseInterface;
+        return this;
+    }
+
+    public RequestManager setResponse(Class<T> clazz) {
+        this.clazz = clazz;
+        return this;
+    }
+
+
+    /**
+     * 通过反射机制获取Builder
+     *
+     * @param netRequest
+     * @return
+     */
+    private FormBody.Builder getBuilder(EndpointRequest netRequest) {
+        FormBody.Builder builder = new FormBody.Builder();
+        try {
+            Method[] methods = netRequest.getClass().getDeclaredMethods();
+            for (Method method : methods) {
+                if (method.getName().startsWith("get")) {
+                    String field = method.getName();
+                    field = field.substring(field.indexOf("get") + 3);
+                    Object value = method.invoke(netRequest, (Object[]) null);
+                    builder.add(field.toLowerCase(), null != value ? value.toString() : "");
                 }
             }
-        };
-        call.enqueue(callback);
-//        Response response = null;
-//        try {
-//            response = call.execute();
-//            Log.d("requestTag",response.body().string()+"请求结果");
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-        return this;
+            Log.e("请求参数=========", builder.toString());
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        return builder;
+    }
+
+    /**
+     * 通过json方式获取Builder
+     *
+     * @param netRequest
+     * @return
+     */
+    private FormBody.Builder getBuilderByJson(EndpointRequest netRequest) {
+        FormBody.Builder builder = new FormBody.Builder();
+        ObjectMapper mMapper = new ObjectMapper();
+        mMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        String bodyStr;
+        try {
+            bodyStr = mMapper.writeValueAsString(netRequest);
+            JSONObject data = new JSONObject(bodyStr.trim());
+            for (int i = 0; i < data.names().length(); i++) {
+                builder.add(data.names().getString(i), data.getString(data.names().getString(i)));
+            }
+
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return builder;
+    }
+
+    private RequestBody getRequestBody(EndpointRequest netRequest){
+        RequestBody requestBody = null;
+        ObjectMapper mMapper = new ObjectMapper();
+        mMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        String bodyStr;
+        try {
+            bodyStr = mMapper.writeValueAsString(netRequest);
+            requestBody = RequestBody.create(MediaType.parse("application/json;charset=utf-8"),bodyStr);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return requestBody;
     }
 
     /**

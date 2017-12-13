@@ -221,7 +221,7 @@ public class LoginActivity extends BaseActivity {
 
 					}
 				})
-				.requestPost(request);
+				.requestByPost(request);
 
 	}
 
