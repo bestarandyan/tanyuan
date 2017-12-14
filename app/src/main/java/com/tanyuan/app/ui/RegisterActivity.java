@@ -117,18 +117,6 @@ public class RegisterActivity extends BaseActivity {
 	}
 
 	private void registerRequest(){
-		// &password=qqqqqq
-		// &lon=0
-		// &open_id=
-		// &small_avatar=http%3A%2F%2Fqiuqiu-photo.oss-cn-hangzhou.aliyuncs.com%2Fuser%2Fthumbnail%2Fe87f81dde76843c98c53dda5c0267f8d.jpg
-		// &nickname=bestar
-		// &avatar=http%3A%2F%2Fqiuqiu-photo.oss-cn-hangzhou.aliyuncs.com%2Fuser%2Foriginal%2Fc2648c8926ce482c82d975f50e4b4e05.jpg
-		// &phone=18068409470
-		// &invitation_code=
-		// &gender=1
-		// &birthday=1990-01-01
-		// &type=phone
-		// &lat=0
 		RegisterUserInfoRequest request =  new RegisterUserInfoRequest(getApplicationContext());
 		request.setAvatar("http://qiuqiu-photo.oss-cn-hangzhou.aliyuncs.com/user/thumbnail/e87f81dde76843c98c53dda5c0267f8d.jpg");
 		request.setSmall_avatar("http://qiuqiu-photo.oss-cn-hangzhou.aliyuncs.com/user/thumbnail/e87f81dde76843c98c53dda5c0267f8d.jpg");
@@ -143,7 +131,7 @@ public class RegisterActivity extends BaseActivity {
 		request.setLat("0");
 		request.setLon("0");
 		RequestManager.builder()
-				.requestByGet(request)
+				.requestByPost(request)
 				.setResponse(RegisterResponse.class)
 				.setRequestListener(new RequestInterface<RegisterResponse>() {
 					@Override

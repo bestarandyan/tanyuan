@@ -95,16 +95,16 @@ public class RequestManager<T> {
      * @return
      */
     public RequestManager requestByPost(EndpointRequest netRequest) {
-        RequestBody body = getRequestBody(netRequest);/*getBuilder(netRequest).build();*/
+        RequestBody body = /*getRequestBody(netRequest);*/getBuilder(netRequest).build();
         String url = getUrl(netRequest);
         Log.e("请求头=========", netRequest.getHeaders().toString());
         Request request = new Request.Builder()
                 .url(url)
                 .headers(netRequest.getHeaders())
+//                .tag(netRequest)
                 .post(body)
                 .build();
         sendRequest(request);
-
         return this;
     }
 
@@ -126,6 +126,7 @@ public class RequestManager<T> {
                 .connectTimeout(30, TimeUnit.SECONDS)
                 .writeTimeout(10, TimeUnit.SECONDS)
                 .readTimeout(30,TimeUnit.SECONDS)
+//                .addInterceptor(new BodyInterceptor(new ObjectMapper()))
                 .build();
         return okHttpClient;
     }

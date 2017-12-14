@@ -14,7 +14,7 @@ public class NetRequest implements EndpointRequest {
     @Override
     public Headers getHeaders() {
         Headers.Builder builder = new Headers.Builder();
-        builder.add("Accept","*/*");
+        builder.add("Accept","application/json; charset=UTF-8");
         Headers headers = builder.build();
         return headers;
     }

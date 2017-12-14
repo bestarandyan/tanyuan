@@ -7,6 +7,8 @@ import com.tanyuan.network.interfaces.EndpointRequest;
 import java.io.IOException;
 
 import okhttp3.Interceptor;
+import okhttp3.MediaType;
+import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
@@ -22,13 +24,18 @@ public class BodyInterceptor implements Interceptor {
 
     @Override
     public Response intercept(Chain chain) throws IOException {
-        return null;
+        Request request = chain.request();
+        Object tag = request.tag();
+        if (tag!= null && tag instanceof EndpointRequest){
+            request = chain.request().newBuilder().post(getBody((EndpointRequest) tag)).build();
+        }
+        return chain.proceed(request);
     }
 
     private RequestBody getBody(EndpointRequest request){
         try {
-            String body = mapper.writer().writeValueAsString(request);
-
+            String body = mapper.writer().withDefaultPrettyPrinter().writeValueAsString(request);
+            return RequestBody.create(MediaType.parse("application/json; charset=utf-8"),body);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }

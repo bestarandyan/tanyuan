@@ -5,6 +5,8 @@ import android.util.Log;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tanyuan.network.interfaces.RequestInterface;
 
+import org.json.JSONObject;
+
 import java.io.IOException;
 
 import okhttp3.Call;
@@ -35,9 +37,13 @@ public class RequestCallBack<T> implements Callback {
             String json = response.body().string();
             Log.e("requestTag", json + "请求结果");
             try {
+                JSONObject data = new JSONObject(json.trim());
+                Log.e("dataMessage ====== ",data.get("message").toString());
+
+
                 ObjectMapper objectMapper = new ObjectMapper();
                 T object = objectMapper.readValue(json, clazz);
-//                        Log.e("dataMessage ====== ",data.get("message").toString());
+
                 requestInterface.onReceivedData(object);
             } catch (Exception e) {
                 e.printStackTrace();
