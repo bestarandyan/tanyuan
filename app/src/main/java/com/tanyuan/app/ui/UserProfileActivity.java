@@ -3,6 +3,7 @@ package com.tanyuan.app.ui;
 import java.io.ByteArrayOutputStream;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.hyphenate.EMValueCallBack;
 import com.hyphenate.chat.EMClient;
 import com.tanyuan.app.DemoHelper;
@@ -128,7 +129,9 @@ public class UserProfileActivity extends BaseActivity implements OnClickListener
 				    }
 					tvNickName.setText(user.getNick());
 					if(!TextUtils.isEmpty(user.getAvatar())){
-						 Glide.with(UserProfileActivity.this).load(user.getAvatar()).placeholder(R.drawable.em_default_avatar).into(headAvatar);
+						RequestOptions requestOptions = new RequestOptions();
+						requestOptions.placeholder(R.drawable.em_default_avatar);
+						 Glide.with(UserProfileActivity.this).load(user.getAvatar()).apply(requestOptions).into(headAvatar);
 					}else{
 					    Glide.with(UserProfileActivity.this).load(R.drawable.em_default_avatar).into(headAvatar);
 					}

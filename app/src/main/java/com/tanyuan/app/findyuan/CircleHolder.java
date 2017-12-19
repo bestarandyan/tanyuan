@@ -1,5 +1,6 @@
 package com.tanyuan.app.findyuan;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -7,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.tanyuan.app.R;
+import com.tanyuan.app.imageloader.ImageLoaderUtil;
 import com.tanyuan.app.response.CircleModel;
 import com.tanyuan.app.utils.CommonUtil;
 import com.tanyuan.app.utils.DateUtil;
@@ -17,13 +19,15 @@ import com.view.scalpel.widget.roundedimageview.RoundedImageView;
  */
 
 public class CircleHolder extends RecyclerView.ViewHolder {
-    public CircleHolder(View itemView) {
+    Context mContext;
+    public CircleHolder(Context context,View itemView) {
         super(itemView);
+        this.mContext = context;
     }
 
     public void setView(CircleModel model){
         RoundedImageView headView = itemView.findViewById(R.id.ballFriendsImg);
-        ImageView cirlceImg = itemView.findViewById(R.id.circleImg)
+        ImageView circleImg = itemView.findViewById(R.id.circleImg)
                 ,msgImg = itemView.findViewById(R.id.msgImg)
                 ,zanImg = itemView.findViewById(R.id.zanImg)
                 ,moneyImg = itemView.findViewById(R.id.moneyImg);
@@ -38,7 +42,7 @@ public class CircleHolder extends RecyclerView.ViewHolder {
         nameTv.setText(model.getNickname());
         Long  birthday = model.getBirthday();
         if (birthday!=null){
-            ageTv.setText(DateUtil.getAgeByBirthday(DateUtil.getDateToDate(birthday)) + "");
+            ageTv.setText(DateUtil.getAgeByBirthday(DateUtil.getDateToDate(birthday)) + "岁");
         }else{
             ageTv.setText("保密");
         }
@@ -53,6 +57,9 @@ public class CircleHolder extends RecyclerView.ViewHolder {
         msgCountTv.setText(CommonUtil.getInt(model.getCommentCount())+"");
         zanCountTv.setText(CommonUtil.getInt(model.getLikeCount())+"");
         moneyCountTv.setText(CommonUtil.getInt(model.getAwardCount())+"");
+
+        ImageLoaderUtil.getInstant(mContext).loadImage(model.getSmallAvatar(),headView,true);
+        ImageLoaderUtil.getInstant(mContext).loadImage(model.getImgUrls().get(0),circleImg,true);
 
     }
 

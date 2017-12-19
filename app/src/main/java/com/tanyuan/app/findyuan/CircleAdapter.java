@@ -25,7 +25,7 @@ public class CircleAdapter extends RecyclerView.Adapter {
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(mContext).inflate(R.layout.item_dongtai_list,null);
-        return new CircleHolder(itemView);
+        return new CircleHolder(mContext,itemView);
     }
 
     @Override
@@ -34,6 +34,11 @@ public class CircleAdapter extends RecyclerView.Adapter {
             CircleHolder circleHolder = (CircleHolder) holder;
             circleHolder.setView(models.get(position));
         }
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return super.getItemViewType(position);
     }
 
     @Override

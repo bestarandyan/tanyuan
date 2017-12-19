@@ -16,6 +16,7 @@ import com.tanyuan.app.request.CircleListRequest;
 import com.tanyuan.app.response.BallFriendCirlceResponse;
 import com.tanyuan.app.response.CircleModel;
 import com.tanyuan.app.utils.preference.UserPreferenceUtils;
+import com.tanyuan.app.widget.MyItemDecoration;
 import com.tanyuan.network.interfaces.RequestInterface;
 import com.tanyuan.network.request.RequestManager;
 
@@ -47,6 +48,7 @@ public class FindYuanFragment extends Fragment {
         mListView = mView.findViewById(R.id.dongtaiList);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(),LinearLayoutManager.VERTICAL,false);
         mListView.setLayoutManager(layoutManager);
+        mListView.addItemDecoration(new MyItemDecoration(getActivity(),20));
     }
 
     private void setView(final ArrayList<CircleModel> models){
