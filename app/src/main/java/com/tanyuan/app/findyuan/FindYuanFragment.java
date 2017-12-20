@@ -10,11 +10,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.tanyuan.app.R;
+import com.tanyuan.app.interfaces.AdapterClickListener;
 import com.tanyuan.app.request.CircleListRequest;
+import com.tanyuan.app.request.DeleteDongtaiRequest;
 import com.tanyuan.app.response.BallFriendCirlceResponse;
 import com.tanyuan.app.response.CircleModel;
+import com.tanyuan.app.response.QiuBaseResponse;
 import com.tanyuan.app.utils.preference.UserPreferenceUtils;
 import com.tanyuan.app.widget.MyItemDecoration;
 import com.tanyuan.network.interfaces.RequestInterface;
@@ -55,10 +59,20 @@ public class FindYuanFragment extends Fragment {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mListView.setAdapter(new CircleAdapter(getActivity(),models));
+                CircleAdapter adapter = new CircleAdapter(getActivity(),models);
+                adapter.setClickListener(new AdapterClickListener() {
+                    @Override
+                    public void OnClick(int type, int positon) {
+                        if (type == 0){
+                            Toast.makeText(getActivity(),"这是第" + positon +"条数据", Toast.LENGTH_LONG).show();
+                            deleteDongtaiRequest(models.get(positon).getUserStateId(),models.get(positon).getUserId());
+                        }
+                    }
+                });
+                mListView.setAdapter(adapter);
+
             }
         });
-
     }
 
     @Override
@@ -93,6 +107,23 @@ public class FindYuanFragment extends Fragment {
                 }).requestByGet(request);
     }
 
+    private void deleteDongtaiRequest(int stateid,int userid){
+        DeleteDongtaiRequest request = new DeleteDongtaiRequest(getActivity());
+        request.setUserStateId(stateid);
+        request.setUserId(userid);
+       RequestManager.builder().setResponse(QiuBaseResponse.class)
+               .setRequestListener(new RequestInterface<QiuBaseResponse>() {
+                   @Override
+                   public void onReceivedData(QiuBaseResponse response) {
+                       getCircleRequest();
+                   }
 
+                   @Override
+                   public void onErrorData(QiuBaseResponse response) {
+
+                   }
+               })
+               .requestByGet(request);
+    }
 
 }

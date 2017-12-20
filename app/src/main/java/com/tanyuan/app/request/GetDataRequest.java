@@ -27,7 +27,7 @@ public class GetDataRequest extends NetRequest {
             builder.add(key,superHeaders.get(key));
         }
         LoginEntity entity = UserPreferenceUtils.getUserData(mContext);
-        builder.add("Content-Type","application/json");
+        builder.add("Content-Type","application/x-www-form-urlencoded");
 //        builder.add("Accept-Encoding","gzip,deflate");
         builder.add("token",entity!=null?entity.token:"");
         builder.add("userId",entity!=null?entity.user_id:"");

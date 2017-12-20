@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.tanyuan.app.R;
+import com.tanyuan.app.base.BaseAdapter;
 import com.tanyuan.app.response.CircleModel;
 
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ import java.util.ArrayList;
  * Created by liuxingxing on 2017/12/14.
  */
 
-public class CircleAdapter extends RecyclerView.Adapter {
+public class CircleAdapter extends BaseAdapter {
     ArrayList<CircleModel> models;
     Context mContext;
     CircleAdapter(Context context,ArrayList<CircleModel> models){
@@ -33,6 +34,9 @@ public class CircleAdapter extends RecyclerView.Adapter {
         if (holder!=null && holder instanceof CircleHolder){
             CircleHolder circleHolder = (CircleHolder) holder;
             circleHolder.setView(models.get(position));
+            if (mClickListener!=null) {
+                circleHolder.setClickListener(mClickListener);
+            }
         }
     }
 
@@ -40,6 +44,7 @@ public class CircleAdapter extends RecyclerView.Adapter {
     public int getItemViewType(int position) {
         return super.getItemViewType(position);
     }
+
 
     @Override
     public int getItemCount() {

@@ -21,7 +21,7 @@ public class ImageLoaderUtil {
 
     public static Context mContext;
 
-    public static ImageLoaderUtil getInstant(Context context){
+    public static ImageLoaderUtil getInstance(Context context){
         mContext = context;
         if (loaderUtil == null){
             loaderUtil = new ImageLoaderUtil();

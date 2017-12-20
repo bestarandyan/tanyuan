@@ -49,6 +49,7 @@ public class RequestManager<T> {
         String host = BuildConfig.API_HOST;
         httpUrl.append(host);
         RequestConfig config = netRequest.getClass().getAnnotation(RequestConfig.class);
+        if (config == null) return "";
         String path = config.path();
         if (!TextUtils.isEmpty(path)) {
             httpUrl.append("/");

@@ -47,7 +47,7 @@
     <!--base color-->
     <color name="white">#ffffff</color>
     <color name="black">#000000</color>
-    <color name="title">#ff5a60</color>
+    <color name="title">#F34C9F</color>
     <color name="app_action_bar_bg">#00b9ef</color>
     <color name="apply_page1">#bbe1ee</color>
     <color name="comm_background">#EFF3F4</color>
@@ -75,7 +75,7 @@
     <color name="tab_text_pressed_color">#CD0000</color>
     <color name="login_out_color">#ff4040</color>
     <color name="common_color">#333</color>
-    <color name="divider_color">#d6d6d6</color>
+    <color name="divider_color">#f5f5f5</color>
     <color name="award_rent_bg">#30ace8</color>
     <color name="award_sell_bg">#ff5a60</color>
     <color name="award_list_divider">#d6d6d6</color>
