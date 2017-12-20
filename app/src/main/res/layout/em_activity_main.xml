@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="52dp"
         android:layout_alignParentBottom="true"
-        android:background="@color/bottom_bar_normal_bg"
+        android:background="@color/color_ffffff"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         tools:ignore="DisableBaselineAlignment">
@@ -26,13 +26,13 @@
                 android:id="@+id/btn_findyuan"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/em_main_bottom_item_bg"
-                android:drawableTop="@drawable/em_tab_chat_bg"
+                android:background="@null"
+                android:drawableTop="@drawable/icon_findyuan"
                 android:onClick="onTabClicked"
                 android:paddingBottom="2dip"
                 android:paddingTop="7dip"
                 android:scaleType="matrix"
-                android:text="@string/findyuan"
+                android:text="好友"
                 android:textColor="@color/em_main_botton_text_color"
                 android:textSize="12sp" />
 
@@ -45,7 +45,7 @@
                 android:layout_marginTop="1dp"
                 android:background="@drawable/em_unread_count_bg"
                 android:gravity="center"
-                android:textColor="@android:color/white"
+                android:textColor="@color/color_666"
                 android:textSize="12sp"
                 android:visibility="invisible" />
         </RelativeLayout>
@@ -60,13 +60,13 @@
                 android:id="@+id/btn_conversation"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/em_main_bottom_item_bg"
+                android:background="@null"
                 android:drawableTop="@drawable/em_tab_chat_bg"
                 android:onClick="onTabClicked"
                 android:paddingBottom="2dip"
                 android:paddingTop="7dip"
                 android:scaleType="matrix"
-                android:text="@string/session"
+                android:text="好说"
                 android:textColor="@color/em_main_botton_text_color"
                 android:textSize="12sp" />
 
@@ -94,13 +94,13 @@
                 android:id="@+id/btn_userlist"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/em_main_bottom_item_bg"
+                android:background="@null"
                 android:drawableTop="@drawable/em_tab_contact_list_bg"
                 android:onClick="onTabClicked"
                 android:paddingBottom="2dip"
                 android:paddingTop="7dip"
                 android:scaleType="matrix"
-                android:text="@string/userlist"
+                android:text="好爽"
                 android:textColor="@color/em_main_botton_text_color"
                 android:textSize="12sp" />
 
@@ -124,13 +124,13 @@
                 android:id="@+id/btn_circle"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/em_main_bottom_item_bg"
+                android:background="@null"
                 android:drawableTop="@drawable/em_tab_contact_list_bg"
                 android:onClick="onTabClicked"
                 android:paddingBottom="2dip"
                 android:paddingTop="7dip"
                 android:scaleType="matrix"
-                android:text="@string/circle"
+                android:text="好准"
                 android:textColor="@color/em_main_botton_text_color"
                 android:textSize="12sp" />
 
@@ -154,13 +154,13 @@
                 android:id="@+id/btn_setting"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/em_main_bottom_item_bg"
+                android:background="@null"
                 android:drawableTop="@drawable/em_tab_setting_bg"
                 android:onClick="onTabClicked"
                 android:paddingBottom="2dip"
                 android:paddingTop="7dip"
                 android:scaleType="matrix"
-                android:text="@string/setting"
+                android:text="好玩"
                 android:textColor="@color/em_main_botton_text_color"
                 android:textSize="12sp" />
         </RelativeLayout>
