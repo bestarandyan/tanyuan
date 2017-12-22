@@ -27,7 +27,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@null"
-                android:drawableTop="@drawable/icon_findyuan"
+                android:drawableTop="@drawable/em_tab_friend_bg"
                 android:onClick="onTabClicked"
                 android:paddingBottom="2dip"
                 android:paddingTop="7dip"
@@ -95,7 +95,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@null"
-                android:drawableTop="@drawable/em_tab_contact_list_bg"
+                android:drawableTop="@drawable/icon_ai"
                 android:onClick="onTabClicked"
                 android:paddingBottom="2dip"
                 android:paddingTop="7dip"
@@ -141,7 +141,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="10dp"
                 android:background="@drawable/em_unread_dot"
-                android:visibility="visible" />
+                android:visibility="gone" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -171,5 +171,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/main_bottom" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/line_border"
+        android:layout_alignTop="@+id/main_bottom"
+        ></View>
 
 </RelativeLayout>
